@@ -1,31 +1,36 @@
 {
   "name": "zerodev-example",
   "version": "1.0.0",
-  "description": "Simple example of ZeroDev Account Abstraction SDK",
-  "main": "index.js",
+  "type": "module",
+  "description": "Frontend example of ZeroDev Account Abstraction SDK with React",
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "build": "tsc",
-    "dev": "ts-node src/index.ts"
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
   "keywords": [
     "zerodev",
     "account-abstraction",
     "erc-4337",
-    "smart-accounts"
+    "smart-accounts",
+    "react",
+    "vite"
   ],
   "author": "",
   "license": "MIT",
   "dependencies": {
     "@zerodev/ecdsa-validator": "^5.3.1",
     "@zerodev/sdk": "^5.3.8",
-    "dotenv": "^16.4.5",
     "permissionless": "^0.1.44",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "viem": "^2.21.49"
   },
   "devDependencies": {
-    "@types/node": "^20.14.10",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.5.3"
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.3"
   }
 }
