@@ -6,6 +6,12 @@ import { createKernelAccount, createKernelAccountClient, createZeroDevPaymasterC
 import { signerToEcdsaValidator } from '@zerodev/ecdsa-validator'
 import { ENTRYPOINT_ADDRESS_V07 } from 'permissionless'
 import { bundlerActions } from 'permissionless'
+import { LogEntry, AccountData } from './types'
+import InputForm from './components/InputForm'
+import MintButton from './components/MintButton'
+import AccountInfo from './components/AccountInfo'
+import LogViewer from './components/LogViewer'
+import Footer from './components/Footer'
 import './App.css'
 
 // Configuration
@@ -19,18 +25,12 @@ const contractABI = parseAbi([
   'function balanceOf(address owner) public view returns (uint256)'
 ])
 
-interface LogEntry {
-  type: 'info' | 'success' | 'error'
-  message: string
-}
-
 function App() {
   const [privateKey, setPrivateKey] = useState('')
   const [zerodevRpc, setZerodevRpc] = useState('')
   const [logs, setLogs] = useState<LogEntry[]>([])
   const [isLoading, setIsLoading] = useState(false)
-  const [accountAddress, setAccountAddress] = useState('')
-  const [nftBalance, setNftBalance] = useState<string>('')
+  const [accountData, setAccountData] = useState<AccountData | null>(null)
 
   const addLog = (type: LogEntry['type'], message: string) => {
     setLogs(prev => [...prev, { type, message }])
@@ -38,8 +38,7 @@ function App() {
 
   const clearLogs = () => {
     setLogs([])
-    setAccountAddress('')
-    setNftBalance('')
+    setAccountData(null)
   }
 
   const mintNFT = async () => {
@@ -83,7 +82,7 @@ function App() {
         entryPoint,
         kernelVersion
       })
-      setAccountAddress(account.address)
+      setAccountData({ address: account.address, nftBalance: '' })
       addLog('success', `アカウントアドレス: ${account.address}`)
 
       // Step 4: Create Paymaster Client
@@ -156,7 +155,7 @@ function App() {
       })
 
       const minted = Number(finalBalance) - Number(initialBalance)
-      setNftBalance(finalBalance.toString())
+      setAccountData({ address: account.address, nftBalance: finalBalance.toString() })
       addLog('success', `最終NFT残高: ${finalBalance.toString()}`)
       addLog('success', `ミントされたNFT: ${minted}`)
       addLog('success', 'ZeroDev Account Abstraction完了！')
@@ -175,91 +174,26 @@ function App() {
         <p className="subtitle">React + Vite フロントエンドサンプル</p>
 
         <div className="card">
-          <div className="form-group">
-            <label htmlFor="privateKey">秘密鍵（テスト用のみ）</label>
-            <input
-              id="privateKey"
-              type="password"
-              placeholder="0x..."
-              value={privateKey}
-              onChange={(e) => setPrivateKey(e.target.value)}
-              disabled={isLoading}
-            />
-            <small>警告: 本番環境では秘密鍵を直接入力しないでください</small>
-          </div>
+          <InputForm
+            privateKey={privateKey}
+            zerodevRpc={zerodevRpc}
+            isLoading={isLoading}
+            onPrivateKeyChange={setPrivateKey}
+            onZerodevRpcChange={setZerodevRpc}
+          />
 
-          <div className="form-group">
-            <label htmlFor="zerodevRpc">ZeroDev RPC URL</label>
-            <input
-              id="zerodevRpc"
-              type="text"
-              placeholder="https://rpc.zerodev.app/api/v2/bundler/..."
-              value={zerodevRpc}
-              onChange={(e) => setZerodevRpc(e.target.value)}
-              disabled={isLoading}
-            />
-            <small>
-              <a href="https://dashboard.zerodev.app/" target="_blank" rel="noopener noreferrer">
-                ZeroDev Dashboard
-              </a>
-              でSepoliaプロジェクトを作成してRPC URLを取得
-            </small>
-          </div>
-
-          <button
-            onClick={mintNFT}
+          <MintButton
+            isLoading={isLoading}
             disabled={isLoading || !privateKey || !zerodevRpc}
-            className="mint-button"
-          >
-            {isLoading ? 'ミント中...' : 'NFTをミント'}
-          </button>
+            onClick={mintNFT}
+          />
 
-          {accountAddress && (
-            <div className="info-box">
-              <strong>アカウントアドレス:</strong>
-              <code>{accountAddress}</code>
-            </div>
-          )}
-
-          {nftBalance && (
-            <div className="info-box success">
-              <strong>NFT残高:</strong>
-              <code>{nftBalance}</code>
-            </div>
-          )}
+          <AccountInfo accountData={accountData} />
         </div>
 
-        {logs.length > 0 && (
-          <div className="logs-container">
-            <div className="logs-header">
-              <h3>実行ログ</h3>
-              <button onClick={clearLogs} className="clear-button">クリア</button>
-            </div>
-            <div className="logs">
-              {logs.map((log, index) => (
-                <div key={index} className={`log-entry log-${log.type}`}>
-                  <span className="log-icon">
-                    {log.type === 'success' ? '✓' : log.type === 'error' ? '✗' : 'ℹ'}
-                  </span>
-                  <span className="log-message">{log.message}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <LogViewer logs={logs} onClear={clearLogs} />
 
-        <div className="footer">
-          <p>
-            <strong>使用しているNFTコントラクト:</strong> {contractAddress}
-          </p>
-          <p>
-            <strong>ネットワーク:</strong> Sepolia Testnet
-          </p>
-          <p className="note">
-            このサンプルはAccount Abstraction (ERC-4337)を使用して、<br />
-            Paymasterによるガスレストランザクションを実現しています。
-          </p>
-        </div>
+        <Footer />
       </div>
     </div>
   )

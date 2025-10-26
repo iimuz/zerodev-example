@@ -1,0 +1,25 @@
+.footer {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  color: #333;
+}
+
+.footer p {
+  margin: 0.5rem 0;
+}
+
+.footer strong {
+  color: #667eea;
+}
+
+.footer .note {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e0e0e0;
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.6;
+}

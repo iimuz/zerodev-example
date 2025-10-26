@@ -1,0 +1,30 @@
+.account-info {
+  margin-top: 1.5rem;
+}
+
+.info-box {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f0f4ff;
+  border-left: 4px solid #667eea;
+  border-radius: 4px;
+  word-break: break-all;
+}
+
+.info-box.success {
+  background-color: #f0fdf4;
+  border-left-color: #22c55e;
+}
+
+.info-box strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+.info-box code {
+  display: block;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  color: #666;
+}
